@@ -136,3 +136,7 @@ venv.bak/
 *.exe
 *.out
 *.app
+
+# Custom
+src/cmake-build-debug
+.idea/
