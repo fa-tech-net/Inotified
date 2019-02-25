@@ -30,7 +30,7 @@
 
 #include "../../common/globals.h"
 
-Logging::Logger * log = glob.log;
+Logging::Logger * l = glob.log;
 
 typedef struct iNotified_event
 {

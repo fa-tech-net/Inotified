@@ -125,6 +125,7 @@ void Logger::logError(unsigned char level, const std::string & message)
 		return;
 	std::string level_str;
 	bool isError = false;
+	(void)isError;
 	if (level < default_levels.size())
 	{
 		level_str = std::get<1>(std::get<1>(default_levels[level]));

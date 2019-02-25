@@ -14,7 +14,9 @@ CXX			= 	g++
 
 
 all			: 	$(OBJS)
-				$(CXX) -o $(NAME) $(OBJS) $(CXXFLAGS) $(LIB)
+				$(CXX) -o $(NAME) $(OBJS) $(CXXFLAGS) $(LIBS)
 
 clean		:
 				rm -f $(OBJS)
+
+re			:	all clean

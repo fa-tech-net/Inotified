@@ -8,15 +8,15 @@
 
 InotifyWrapper::InotifyWrapper()
 {
-    log->log(L_DBG, "<InotifyWrapper.cpp>::InotifyWrapper::InotifyWrapper() :");
+    l->log(L_DBG, "<InotifyWrapper.cpp>::InotifyWrapper::InotifyWrapper() :");
     this->__iNotify_fd = inotify_init1(IN_NONBLOCK);
     if (this->__iNotify_fd == -1)
     {
-        log->logError(L_DBG, "Call function 'this->__iNotify_fd = inotify_init1(IN_NONBLOCK);', failure : Returns -1 ");
-        log->logError(L_FAT, "Failed to initialize inotify");
+        l->logError(L_DBG, "Call function 'this->__iNotify_fd = inotify_init1(IN_NONBLOCK);', failure : Returns -1 ");
+        l->logError(L_FAT, "Failed to initialize inotify");
         throw std::runtime_error("inotify_init1(IN_NONBLOCK) returns -1 ");
     }
-    log->log(L_NOT, "Initialized inotify API");
+    l->log(L_NOT, "Initialized inotify API");
 }
 
 inline bool InotifyWrapper::__checkFlag(unsigned int mask) const
@@ -40,47 +40,58 @@ std::string InotifyWrapper::generateID(const std::string & path, unsigned int fl
     return (std::string(reinterpret_cast<const char *>(buf)));
 }
 
-iEvent* InotifyWrapper::newIevent(int wd = NULL)
+iEvent* InotifyWrapper::newIevent(int wd = 0)
 {
-    log->log(L_DBG, "<InotifyWrapper.cpp>::InotifyWrapper::InotifyWrapper() :");
+    l->log(L_DBG, "<InotifyWrapper.cpp>::InotifyWrapper::InotifyWrapper() :");
     auto * tmp = new iEvent();
     tmp->events = new std::vector<inotify_event>();
     tmp->watch_descriptor = wd;
     tmp->timestamp = std::time(0);
-    log->log(L_NOT, "New Ievent created");
+    l->log(L_NOT, "New Ievent created");
     return(tmp);
 }
 
 
 int         InotifyWrapper::monitorFile(const std::string & path, unsigned int event) {
-    log->log(L_DBG, "<InotifyWrapper.cpp>::InotifyWrapper::monitorFile(const std::string &, unsigned int)");
+    l->log(L_DBG, "<InotifyWrapper.cpp>::InotifyWrapper::monitorFile(const std::string &, unsigned int)");
     char hex[10];
     snprintf(hex, 10, "0x%X", event);
     hex[10] = 0;
     /* Checking flag */
     if (!this->__checkFlag(event)) {
-        log->logError(L_ERR, "Invalid flag provided !");
-        log->logError(L_ERR, "Event value : " + std::string(hex));
+        l->logError(L_ERR, "Invalid flag provided !");
+        l->logError(L_ERR, "Event value : " + std::string(hex));
         throw std::runtime_error("Invalid flag provided, value = " + std::string(hex));
     }
     /* Add watch with provided flag */
     int watch_descriptor = inotify_add_watch(this->__iNotify_fd, path.c_str(), event);
-    log->log(L_DBG, "Call function inotify_add_watch(this->__iNotify_fd, path.c_str(), event);");
-    log->log(L_DBG, "With values : ");
-    log->log(L_DBG, "\tthis->__iNotify_fd => '" + std::to_string(this->__iNotify_fd) + "'");
-    log->log(L_DBG, "\tpath.c_str() => '" + path + "'");
-    log->log(L_DBG, "\tevent => '" + std::string(hex) + "'");
+    l->log(L_DBG, "Call function inotify_add_watch(this->__iNotify_fd, path.c_str(), event);");
+    l->log(L_DBG, "With values : ");
+    l->log(L_DBG, "\tthis->__iNotify_fd => '" + std::to_string(this->__iNotify_fd) + "'");
+    l->log(L_DBG, "\tpath.c_str() => '" + path + "'");
+    l->log(L_DBG, "\tevent => '" + std::string(hex) + "'");
     if (watch_descriptor == -1) {
-        log->logError(L_ERR, "Cannot monitor file : '" + path + "' error when calling inotify_add_watch ");
+        l->logError(L_ERR, "Cannot monitor file : '" + path + "' error when calling inotify_add_watch ");
         throw std::runtime_error("Cannot monitor file : '" + path + "', error when calling inotify_add_watch");
     }
-    log->log(L_NOT, "New watch descriptor created : " + path);
+    l->log(L_NOT, "New watch descriptor created : " + path);
     auto *ev = newIevent(watch_descriptor);
+    (void)ev;
 //    auto
 //    const std::vector<std::pair<std::string, std::vector<iEvent *>>>;
 //    this->_iStack.push_back(this->generateID(path, flag));
 }
 
 void        InotifyWrapper::removeMonitoring(const std::string &) {}
-const std::vector<std::pair<std::string, std::vector< iEvent *>>>  & InotifyWrapper::getAllEvents() const {}
-const std::vector<iEvent *> & InotifyWrapper::getEvents(int fd) const {}
+const std::vector<std::pair<std::string, std::vector< iEvent *>>>  & InotifyWrapper::getAllEvents() const
+{
+    auto ret = new std::vector<std::pair<std::string, std::vector< iEvent *>>>();
+   return (*ret);
+}
+
+const std::vector<iEvent *> & InotifyWrapper::getEvents(int fd) const
+{
+    (void)fd;
+    auto ret = new std::vector<iEvent *>();
+    return (*ret);
+}
